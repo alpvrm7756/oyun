@@ -1,35 +1,36 @@
-# OyunRPG Prototype
+# OyunRPG Godot Vertical Slice
 
-OyunRPG is a playable third-person prototype built in **Godot 4** that showcases core loops for an expansive 3D action RPG. The project now contains a vertical slice featuring traversal, light melee combat, quest progression, interactive world objects, and a minimal HUD. All assets are procedural or engine-generated so the project can be cloned and explored without external dependencies.
+This repository now ships a compact third-person RPG prototype built with **Godot 4**. The slice includes WASD traversal, a melee attack, a roaming enemy, and a short quest that guides the player from NPC dialogue through combat and back to the quest giver.
 
 ## Features
-- **Player controller** with WASD+mouse movement, sprint-style acceleration, jumping, and directional combat raycasts.
-- **Stats system** shared by the player and enemies that handles leveling, health, mana, and experience rewards.
-- **Enemy AI** that patrols and pursues the player, attacking within range and dealing damage over time.
-- **Quest pipeline** driven by a global QuestLog singleton. The included "Cleanse the Obelisks" quest tracks progress and grants rewards when complete.
-- **Interactive world objects** like corrupted obelisks that consume mana to cleanse and NPCs that gate quests via branching dialogue.
-- **Reactive HUD** that mirrors health/mana, quest progress, interaction prompts, and streamed dialogue.
+- **Character Controller:** Mouse-look and WASD movement driven by a `CharacterBody3D` script.
+- **Enemy AI:** A simple pursuer that aggroes when the player approaches and uses cooldown-based melee attacks.
+- **Quest Loop:** Talk to the camp guide, defeat the spirit, then return for a completion state and updated dialogue.
+- **HUD Overlay:** CanvasLayer UI describing the current objective and contextual prompts.
+- **Interaction Prompts:** Floating 3D label on the NPC that illuminates when the player is within range.
 
 ## Project Layout
 ```
-/game/project.godot   — Godot project configuration with input map and autoloads
-/game/scenes          — Packed scenes for the player, enemies, NPCs, obelisks, and the main world
-/game/scripts         — Gameplay logic for characters, quests, dialogue, combat, and world state
-/game/ui              — HUD scene + script wiring runtime signals into UI widgets
-/docs                 — High-level vision, systems documentation, and production roadmap
+/game/project.godot     — Engine configuration and input bindings
+/game/scenes/Main.tscn  — Root scene wiring the level, player, enemy, NPC, and UI
+/game/scripts/*.gd      — Gameplay scripts for the player, enemy, NPC, and quest flow
+/docs                   — Creative vision, systems notes, and long-term roadmap
 ```
 
-## Getting Started
-1. Install **Godot 4.1+**.
-2. Open the project by selecting `game/project.godot` in the Godot project manager.
-3. Press ▶️ to launch the main scene. Use **WASD** to move, **Space** to jump, **Left Click** to attack, **Right Click** to interact, and **Esc** to release the mouse.
-4. Talk to the guide NPC, cleanse the three obelisks scattered throughout the valley, defeat hostile spheres, and watch the HUD update in real time.
+## Running the Prototype
+1. Install [Godot 4.2 or newer](https://godotengine.org/download).
+2. Open the project by launching Godot and choosing **Import** → select the `game/project.godot` file.
+3. Once the project loads, open `Main.tscn` and press <kbd>F5</kbd> to play, or run directly from the Godot project manager.
+4. Controls:
+   - **WASD:** Move the player
+   - **Mouse:** Look around (pointer is captured automatically)
+   - **Left Mouse Button:** Attack with the sword arc
+   - **E:** Interact with the NPC when close
 
 ## Extending the Slice
-- Replace primitive meshes with authored environment pieces, characters, and VFX.
-- Expand the `QuestLog` rewards to drop inventory items and trigger cutscenes.
-- Add additional enemy archetypes with bespoke AI states and abilities.
-- Build crafting, dialogue choice trees, and save/load systems on top of the provided architecture.
+- Swap primitive meshes for authored characters and environment dressing.
+- Add health bars and damage feedback to the CanvasLayer for better combat readability.
+- Introduce additional enemy types and quest steps by duplicating the existing scripts and adjusting parameters.
 
 ## License
-This prototype ships with engine-generated geometry and code only. You are free to adapt, extend, and commercialize the project. Attribution is appreciated but not required.
+All scripts and scene definitions are released under the MIT license. Use them as a springboard for your own adventures.

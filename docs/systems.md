@@ -1,53 +1,45 @@
 # Systems Architecture
 
 ## Engine & Technical Stack
-- **Engine:** Godot 4.2+ with C# scripting for performance-critical systems; GDScript for rapid iteration tools.
-- **Rendering:** Forward+ renderer with clustered lighting, screen-space global illumination, and volumetric fog.
-- **Physics:** Godot Physics with custom character controller supporting slope handling, ledge detection, and ragdoll blending.
-- **Networking:** Deterministic lockstep for co-op mode with rollback netcode for combat responsiveness.
+- **Runtime:** Godot 4 project targeting desktop platforms with the Forward+ renderer.
+- **Language:** GDScript for all gameplay code; scenes stored as `.tscn` files for readability in version control.
+- **Rendering:** Procedural sky environment, simple directional lighting, and primitive meshes for greybox iteration.
+- **Input:** Built-in Godot action map configured for WASD, mouse look, attack, and interaction actions.
+- **State:** Node-based scripts manage player stats, quest state, and enemy behaviour.
 
 ## Core Modules
-1. **Traversal & World Interaction**
-   - Parkour system: vaulting, climbing, grappling hook, glider.
-   - Dynamic navmesh streaming for seamless open world.
-   - Interactable framework using signal-driven actions.
+1. **Traversal & Camera**
+   - `Player` (`CharacterBody3D`) processes move input every physics tick.
+   - Mouse delta rotates the character and a pivot that carries the third-person camera.
 2. **Combat**
-   - Action layer (real-time inputs) + Tactical layer (pause & command party).
-   - Ability system with tags, cooldowns, resource costs, and element modifiers.
-   - AI behavior trees with utility scoring for target selection and ability usage.
-3. **RPG Progression**
-   - Classless attribute web with hybrid builds (melee, ranged, arcane, technomancer).
-   - Perk grid unlocked via quests, discoveries, and faction ranks.
-   - Gear system with modular attachments, rarity tiers, and crafting recipes.
-4. **Quest & Narrative**
-   - Node-based quest graph editor with branching conditions and fail states.
-   - Dialogue authored in Ink, imported via custom parser with localization support.
-   - Cinematic system for key story moments (camera tracks, animations, VO playback).
-5. **World Simulation**
-   - Faction AI with influence maps, territory control, and supply chains.
-   - Economy simulation: regional demand, scarcity events, player-driven markets.
-   - Ecology loops: predator/prey behaviors, weather cycles, and environmental hazards.
-6. **Tools & Pipelines**
-   - World chunk editor with biomes, encounter markers, and streaming bounds.
-   - Procedural population pass for flora, fauna, and ambient NPCs.
-   - Build automation: nightly validation scenes, unit tests, and integration tests.
+   - Player sword swing toggles an `Area3D` used for proximity-based hit detection.
+   - Enemy pursues the player, applying damage on a cooldown when inside melee range.
+3. **Quest Flow**
+   - `GameManager` tracks quest flags and updates the HUD text as objectives change.
+   - `NPC` emits an `interacted` signal that the manager listens to for quest progression.
+4. **World & Feedback**
+   - Floating `Label3D` prompts appear when the player enters the NPC interaction radius.
+   - A `CanvasLayer` HUD shows the current objective and contextual instructions.
+5. **Content Authoring**
+   - All gameplay parameters (speed, health, attack cooldowns) exposed as exported variables for quick tuning in the editor.
+   - Scene graph keeps each gameplay element modular so designers can duplicate or swap components without touching code.
 
 ## Data & Content Management
-- Use JSON/Resource files for human-readable tuning data.
-- Establish GUID-based asset registry to maintain references across scenes.
-- Implement patching pipeline for DLC and live updates with binary diffing.
+- Godot scenes and resources live in the `game/` folder to keep import paths stable.
+- Sub-resources inside `Main.tscn` define primitive meshes, collision shapes, and placeholder animations to avoid missing assets.
+- Quest logic is intentionally linear; future branches can extend `GameManager` with additional states or a formal state machine.
 
 ## Technical Risks & Mitigations
-- **Performance:** Budget CPU/GPU frame time per system; integrate automated frame captures.
-- **Streaming:** Use hierarchical level-of-detail for meshes, textures, and AI updates.
-- **Tooling Debt:** Allocate engineering time each sprint for tooling polish and documentation.
+- **Physics Feel:** Tune `move_speed`, gravity scale, and camera sensitivity inside the inspector to match target responsiveness.
+- **Enemy Pathing:** Current behaviour is direct pursuit; add navigation meshes and `NavigationAgent3D` when environments grow complex.
+- **Content Polish:** Replace primitive meshes and empty animations with authored models to prevent immersion-breaking visuals.
 
 ## Testing Strategy
-- Unit tests for ability math, inventory transactions, quest condition evaluation.
-- Playtest bots executing traversal/combat scripts to validate AI and navmesh integrity.
-- Automated cinematic validation for animation events and audio sync.
+- Use Godot's built-in `--headless --run` mode for automated smoke tests once CLI access is available.
+- Add debug UI labels showing player health, enemy health, and quest state during iteration.
+- Exercise input rebinds through the project settings menu before shipping wider builds.
 
 ## DevOps & Release
-- Continuous integration with static analysis (clang-tidy, linters), unit tests, and packaged builds.
-- Crash telemetry pipeline (Sentry / self-hosted) with save data anonymization.
-- Mod support via sandboxed scripting API and Steam Workshop integration.
+- Store exported builds under a `builds/` directory with semantic version tags.
+- Use Godot's export presets to target Windows, Linux, and macOS with the same content.
+- Consider enabling the Godot editor's asset library integration for designers to pull in environment dressing quickly.
