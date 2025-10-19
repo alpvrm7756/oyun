@@ -1,0 +1,24 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+
+config_version=5
+
+[application]
+config/name="OyunRPG"
+run/main_scene="res://scenes/Main.tscn"
+
+[display]
+window/dpi/allow_hidpi=true
+
+[input]
+move_forward={"deadzone":0.1,"events":[{"type":"InputEventKey","scancode":87,"physical_scancode":87,"unicode":0,"echo":false,"press":true}]}
+move_backward={"deadzone":0.1,"events":[{"type":"InputEventKey","scancode":83,"physical_scancode":83,"unicode":0,"echo":false,"press":true}]}
+move_left={"deadzone":0.1,"events":[{"type":"InputEventKey","scancode":65,"physical_scancode":65,"unicode":0,"echo":false,"press":true}]}
+move_right={"deadzone":0.1,"events":[{"type":"InputEventKey","scancode":68,"physical_scancode":68,"unicode":0,"echo":false,"press":true}]}
+attack={"deadzone":0.1,"events":[{"type":"InputEventMouseButton","button_index":1,"press":true}]}
+interact={"deadzone":0.1,"events":[{"type":"InputEventKey","scancode":69,"physical_scancode":69,"unicode":0,"echo":false,"press":true}]}
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+environment/default_environment="res://default_env.tres"
